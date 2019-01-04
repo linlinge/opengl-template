@@ -3,9 +3,6 @@
 #include <GL/glh_glut.h>
 using namespace glh;
 
-glut_simple_mouse_interactor object;
-
-Vector2D g_vector2D = { -0.2f,0.2f };
 
 
 void OpenglInit(int argc, char** argv)
@@ -52,10 +49,57 @@ void DisplayFunc()
 		}
 	}
 	glEnd();
-
 	glutSwapBuffers();	//swap buffer
-
 }
+
+
+void plot(vector<float>& x, vector<float>& y)
+{
+	glColor3f(1, 0, 0);
+	if (x.size() == y.size())
+	{
+		vector<float>::iterator it = max_element(y.begin(), y.end());
+		float y_max = *it;
+		it = min_element(y.begin(), y.end());
+		float y_min = *it;
+
+		glBegin(GL_LINES);
+		for (int i = 0; i < x.size() - 1; i++)
+		{
+			glVertex3f(TOSCREEN(x[i], x[0], x[x.size() - 1]), TOSCREEN(y[i], y_min, y_max), 0);
+			glVertex3f(TOSCREEN(x[i + 1], x[0], x[x.size() - 1]), TOSCREEN(y[i + 1], y_min, y_max), 0);
+		}
+		glEnd();
+	}
+	else
+	{
+		cout << "Error: The Dimension of x and y not matched!" << endl;
+	}
+}
+
+
+void Mesh(vector<vector<Vec3f>>& dat)
+{
+	for (int i = 0; i < dat.size() - 1; i++)
+	{
+		for (int j = 0; j < dat[0].size() - 1; j++)
+		{
+			float colorx = 0.6*(sin(10 * dat[i][j].x) + 1);
+			float colory = 0.6*(sin(10 * dat[i][j].y) + 1);
+			float colorz = 0.6*(sin(10 * dat[i][j].x + 1) + 1);
+
+			glColor3f(colorx, colory, colorz);
+			glBegin(GL_LINE_LOOP);
+			glVertex3f(dat[i][j].x, dat[i][j].y, dat[i][j].z);
+			glVertex3f(dat[i][j + 1].x, dat[i][j + 1].y, dat[i][j + 1].z);
+			glVertex3f(dat[i + 1][j + 1].x, dat[i + 1][j + 1].y, dat[i + 1][j + 1].z);
+			glVertex3f(dat[i + 1][j].x, dat[i + 1][j].y, dat[i + 1][j].z);
+			glVertex3f(dat[i][j].x, dat[i][j].y, dat[i][j].z);
+			glEnd();
+		}
+	}
+}
+
 //闲置时调用的函数
 void IdleFunc()
 {
