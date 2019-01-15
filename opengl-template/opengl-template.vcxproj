@@ -130,10 +130,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="load_obj.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="my_opengl.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="load_obj.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="my_opengl.h" />
   </ItemGroup>

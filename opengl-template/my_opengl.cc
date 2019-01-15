@@ -1,6 +1,7 @@
 #include "my_opengl.h"
 #include <math.h>
 #include <GL/glh_glut.h>
+#include "load_obj.h"
 using namespace glh;
 GLfloat xRot = 0;
 GLfloat yRot = 0;
