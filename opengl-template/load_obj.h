@@ -17,8 +17,10 @@ public:
 };
 
 class Obj {	
-	void Init();// compute Initial scale
+	void get_radius();
 public:
+	float radius_;
+
 	string filename;
 	vector<Vec3f> points_;
 	vector<Patch> faces_;
@@ -28,7 +30,7 @@ public:
 	void Init(string filename);
 	Obj() {};
 	bool LoadObjFile();
-	void SetColor();
+	
 };
 
 extern Obj obj1;

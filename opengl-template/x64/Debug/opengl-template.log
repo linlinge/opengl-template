@@ -1,7 +1,4 @@
-﻿  load_obj.cpp
-e:\zju_lesson\cg\homework2\template-opengl-vs2017\opengl-template\load_obj.cpp(124): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=float
-          ]
+﻿  my_opengl.cc
+  Note: including lib: glut32.lib
+  
   opengl-template.vcxproj -> E:\ZJU_LESSON\CG\Homework2\template-opengl-vs2017\x64\Debug\opengl-template.exe

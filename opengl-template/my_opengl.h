@@ -15,6 +15,8 @@ void SpecialFunc(int Key, int x, int y);//F1~F12、控制键检测
 void MouseFunc(int button, int state, int x, int y);//鼠标检测
 void MotionFunc(int x, int y);//鼠标按着拖动
 void PassiveMotionFunc(int x, int y);//鼠标移动
+void drawString(const char* str);
 
 void plot(vector<float>& x, vector<float>& y);
 void Mesh(vector<vector<Vec3f>>& dat);
+void display(void);

@@ -1,6 +1,9 @@
-﻿  Generating code
-  0 of 156 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+﻿  my_opengl.cc
+  Note: including lib: glut32.lib
+  
+  Generating code
+  0 of 526 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  opengl-template.vcxproj -> E:\opengl-template\opengl-template\x64\Release\opengl-template.exe
+  opengl-template.vcxproj -> E:\ZJU_LESSON\CG\Homework2\template-opengl-vs2017\x64\Release\opengl-template.exe

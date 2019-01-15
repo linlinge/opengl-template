@@ -7,15 +7,33 @@ GLfloat xRot = 0;
 GLfloat yRot = 0;
 GLfloat zRot = 0;
 
+int myState = 0;
+int scalState = 0;
+int oldX = 0;
+int oldY = 0;
+float rate = 1;
+double x_trans, y_trans, z_trans = 0;
+double x_old_theta, y_old_theta, z_old_theta = 0;
+
+
+
+
+
+void OpenGLInit()
+{
+	float scale=0.9f/(2.0f*obj1.radius_);
+	glScalef(scale,scale,scale);	
+}
+
 void OpenglInit(int argc, char** argv)
 {
-	//obj1.Init("./dataset/deer.obj");
-
+	obj1.Init("./dataset/cat.obj");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA | GLUT_STENCIL);
-	glutInitWindowSize(800, 600);			//set window size
+	glutInitWindowSize(600, 600);			//set window size
 	glutInitWindowPosition(100, 150);		//set window position
 	glutCreateWindow("Display");		//window name
+	OpenGLInit();
 	glutDisplayFunc(DisplayFunc);//屏幕显示的回调函数
 	glutIdleFunc(IdleFunc);//闲置时回调函数（当没有消息时调用）
 	glutKeyboardFunc(KeyboardFunc);//数字、字母键的按键检测的回调函数
@@ -28,21 +46,8 @@ void OpenglInit(int argc, char** argv)
 	glutMainLoop();
 }
 
-
-void DisplayFunc()
+void set_background1()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//clear color buffer
-	glDisable(GL_DEPTH_TEST | GL_LIGHTING);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glShadeModel(GL_SMOOTH);
-	glClearColor(0.6f, 0.6f, 0.6f , 0.1);	//can set the background
-
-	// 保存矩阵状态并旋转
-	glPushMatrix();
-	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
-	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
-	glRotatef(zRot, 0.0f, 0.0f, 1.0f);
-
 	// exmaple: shape1
 	float color = 0.0f;
 	glBegin(GL_POINTS);
@@ -50,18 +55,71 @@ void DisplayFunc()
 	{
 		color += 0.0005f;
 		//设置点颜色
-		glColor3f(pow(color,2), color, color); //设置点颜色
+		glColor3f(pow(color, 2), color, color); //设置点颜色
 		for (float posX = 1.0f; posX >= -1.0f; posX -= 0.001f)
 		{
 			//绘制点
-			glVertex2f(posX, posY);
+			glVertex3f(posX, posY, 0);
 		}
 	}
 	glEnd();
+}
 
-	glPopMatrix();
+void add_light()
+{
+	glShadeModel(GL_SMOOTH);
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+	GLfloat LightAmb[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat LightDif[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat LightPos[] = { 0.0, 20.0, 80.0, 0.0 };
+
+	//light
+	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmb);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDif);
+	glLightfv(GL_LIGHT1, GL_POSITION, LightPos);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_COLOR_MATERIAL);
+}
+void DisplayFunc()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//clear color buffer
+	glDisable(GL_DEPTH_TEST | GL_LIGHTING);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glShadeModel(GL_SMOOTH);
+	glClearColor(0.8f, 0.8f, 0.8f , 0.1);	//can set the background
+
+
+	// 保存矩阵状态并旋转
+	glPushMatrix();
+	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
+	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
+	glRotatef(zRot, 0.0f, 0.0f, 1.0f);
+
+	
+
+	add_light();
+	glPointSize(2);
+	glBegin(GL_POINTS);
+	glColor3f(1, 0, 0);
+	for (auto& v : obj1.points_)
+	{
+		glVertex3f(v.x,v.y,v.z);
+	}
+	glEnd();
+
+
+	glPopMatrix();	
 	glutSwapBuffers();	//swap buffer
 }
+
 
 
 void plot(vector<float>& x, vector<float>& y)
@@ -89,6 +147,7 @@ void plot(vector<float>& x, vector<float>& y)
 }
 
 
+
 void Mesh(vector<vector<Vec3f>>& dat)
 {
 	for (int i = 0; i < dat.size() - 1; i++)
@@ -110,6 +169,60 @@ void Mesh(vector<vector<Vec3f>>& dat)
 		}
 	}
 }
+
+void drawString(const char* str) {
+	static int isFirstCall = 1;
+	static GLuint lists;
+
+	if (isFirstCall) {
+		isFirstCall = 0;
+		lists = glGenLists(128);
+		wglUseFontBitmaps(wglGetCurrentDC(), 0, 128, lists);
+	}
+	// 调用每个字符对应的显示列表，绘制每个字符
+	for (; *str != '\0'; ++str)
+		glCallList(lists + *str);
+}
+
+void display(void) 
+{
+	//glViewport(0,0,100,1200);
+	glColor3f(0.6f, 0.0f, 0.0f);
+	//glTranslatef(0.f, 0.0f, -3.0f);
+	//glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	//glRasterPos2f(-0.9, 0.7);
+	drawString("[L] load model(obj)");
+	glRasterPos2f(-0.9, 0.65);
+	drawString("[S] save model(obj)");
+	glRasterPos2f(-0.9, 0.6);
+	drawString("[E] show edge");
+	glRasterPos2f(-0.9, 0.55);
+	drawString("[F] show face");
+	glRasterPos2f(-0.9, 0.50);
+	drawString("[S] show face");
+	glRasterPos2f(-0.9, 0.45);
+	drawString("[Q] exit");
+
+	glRasterPos2f(-0.9, 0);
+	drawString("keys");
+	glRasterPos2f(-0.9, -0.05);
+	drawString("'->' model left shift");
+	glRasterPos2f(-0.9, -0.1);
+	drawString("'<-' model right shift");
+	glRasterPos2f(-0.9, -0.15);
+	drawString("'^' model up shift");
+	glRasterPos2f(-0.9, -0.2);
+	drawString("'v' model down shift");
+	glRasterPos2f(-0.9, -0.3);
+	drawString("mouse");
+	glRasterPos2f(-0.9, -0.35);
+	drawString("[left] control rotate");
+	glRasterPos2f(-0.9, -0.4);
+	drawString("[right] control scale");
+	glRasterPos2f(-0.9, -0.43);
+	drawString("  (upright with right down)");
+}
+
 
 //闲置时调用的函数
 void IdleFunc()
@@ -144,34 +257,31 @@ void KeyboardFunc(unsigned char key, int x, int y)
 //F1~F12、控制键检测
 void SpecialFunc(int key, int x, int y)
 {
-	if (key == GLUT_KEY_UP)
+	switch (key)
 	{
+	case GLUT_KEY_UP:
 		xRot -= 5.0f;
-	}
-
-	if (key == GLUT_KEY_DOWN)
-	{
+		break;
+	case GLUT_KEY_DOWN:
 		xRot += 5.0f;
-	}
-
-	if (key == GLUT_KEY_LEFT)
-	{
+		break;
+	case GLUT_KEY_LEFT:
 		yRot -= 5.0f;
-	}
-
-	if (key == GLUT_KEY_RIGHT)
-	{
+		break;
+	case GLUT_KEY_RIGHT:
 		yRot += 5.0f;
-	}
-	if (key == GLUT_KEY_F1)
-	{
+		break;
+	case GLUT_KEY_F1:
 		zRot += 5.0f;
+		break;
+	case GLUT_KEY_F2:
+		zRot -= 5.0f;
+	case GLUT_KEY_PAGE_DOWN:
+		glScalef(0.8, 0.8, 0.8);
+	case GLUT_KEY_PAGE_UP:
+		glScalef(1.1, 1.1, 1.1);
 	}
 
-	if (key == GLUT_KEY_F2)
-	{
-		zRot -= 5.0f;
-	}
 	// 使用新的坐标重新绘制场景
 	glutPostRedisplay();
 }
@@ -181,46 +291,57 @@ void MouseFunc(int button, int state, int x, int y)
 	//button  鼠标按键 0 -- 左键    1 -- 中键   2 -- 右键
 	//state  鼠标状态  0 -- 按下  1 -- 抬起
 	//x,y  鼠标的像素点坐标（以窗口的左上角为原点的坐标系）
-	if (button == 0)
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		if (state == 0)
-		{
-	
-		}
-		if (state == 1)
-		{
-			
-		}
+		oldX = x;
+		oldY = y;
+		myState = 1;
 	}
-	if (button == 1)
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
 	{
-		if (state == 0)
-		{
-			
-		}
-		if (state == 1)
-		{
-			
-		}
+		myState = 0;
+		oldX = x;
+		oldY = y;
+		x_old_theta = xRot;
+		y_old_theta = yRot;
 	}
-	if (button == 2)
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 	{
-		if (state == 0)
-		{
-			
-		}
-		if (state == 1)
-		{
-			
-		}
+		scalState = 1;
+		oldX = x;
+		oldY = y;
 	}
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+		scalState = 0;
+	glutPostRedisplay();
 }
+
 //鼠标按着拖动
 void MotionFunc(int x, int y)
 {
 	//x,y  鼠标的像素点坐标（以窗口的左上角为原点的坐标系）
 	
+	if (myState == 1)
+	{
+		yRot = (x - oldX) / 3 + y_old_theta;
+		xRot = (y - oldY) / 3 + x_old_theta;
+	}
+	if (scalState == 1)
+	{
+		if (y > oldY)
+			rate += 0.02;
+		else
+		{
+			rate -= 0.02;
+			if (rate < 0.1)
+				rate = 0.1;
+		}
+		oldX = x;
+		oldY = y;
+	}
+	glutPostRedisplay();
 }
+
 //鼠标移动
 void PassiveMotionFunc(int x, int y)
 {

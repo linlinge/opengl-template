@@ -155,17 +155,17 @@ void fun(string &str, int &x, int &y, int &z)
 	 }
 
 	 //cacluate initial scale
-	 Init();
+	 get_radius();
 	 return true;
  }
 
-void Obj::Init()
+void Obj::get_radius()
 {
 	Vec3f s0;
-	float max_radius = 0.0f;
+	radius_ = 0.0f;
 	for (auto &p : points_)
 	{
 		float dist = s0.DistanceXY(p);
-		max_radius = max_radius > dist ? max_radius : dist;
+		radius_ = radius_ > dist ? radius_ : dist;
 	}
 }
