@@ -1,4 +1,8 @@
-﻿  my_opengl.cc
+﻿  main.cpp
   Note: including lib: glut32.lib
   
-  opengl-template.vcxproj -> E:\opengl-template-vs2017\x64\Debug\opengl-template.exe
+  my_opengl.cc
+  Note: including lib: glut32.lib
+  
+  Generating Code...
+  opengl-template.vcxproj -> F:\template-opengl-vs2017\x64\Debug\opengl-template.exe
