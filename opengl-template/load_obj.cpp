@@ -118,28 +118,39 @@ void fun(string &str, int &x, int &y, int &z)
 			int i = 0;
 			Vec3f p;
 			string str;
+			stringstream ss(line);
+			vector<float> temp_xyz;
+			while (ss >> str)
+				temp_xyz.push_back(atof(str.c_str()));
 
-			/// x axis
-			while (line[i] != ' ') str.push_back(line[i++]);
-			p.x = atof(str.c_str());
-			i++;
-			str.clear();
+			switch (temp_xyz.size())
+			{
+			case 0:
+				cout << "error1" << endl;
+				break;
+			case 1:
+				p.x = temp_xyz[0];
+				p.y = 0;
+				p.z = 0;
+				break;
+			case 2:
+				p.x = temp_xyz[0];
+				p.y = temp_xyz[1];
+				p.z = 0;
+				break;
+			case 3:
+				p.x = temp_xyz[0];
+				p.y = temp_xyz[1];
+				p.z = temp_xyz[2];
+				break;
+			}
 
-			/// y axis
-			while (line[i] != ' ') str.push_back(line[i++]);
-			p.y = atof(str.c_str());
-			i++;
-			str.clear();
 
-			/// z axis
-			while (i < line.size()) str.push_back(line[i++]);
-			p.z = atof(str.c_str());
 
 			// add to vertex
 			if (str_type == "v")  points_.push_back(p);
 			if (str_type == "vn") vn_.push_back(p);
-			if (str_type == "vt") vt_.push_back(p);
-			
+			if (str_type == "vt") vt_.push_back(p);			
 		}
 	 }
 

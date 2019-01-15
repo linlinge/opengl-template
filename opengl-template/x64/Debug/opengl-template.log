@@ -1,9 +1,7 @@
 ﻿  load_obj.cpp
-e:\zju_lesson\cg\homework2\template-opengl-vs2017\opengl-template\load_obj.cpp(124): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\zju_lesson\cg\homework2\template-opengl-vs2017\opengl-template\load_obj.cpp(130): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\zju_lesson\cg\homework2\template-opengl-vs2017\opengl-template\load_obj.cpp(136): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  my_opengl.cc
-  Note: including lib: glut32.lib
-  
-  Generating Code...
+e:\zju_lesson\cg\homework2\template-opengl-vs2017\opengl-template\load_obj.cpp(124): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
   opengl-template.vcxproj -> E:\ZJU_LESSON\CG\Homework2\template-opengl-vs2017\x64\Debug\opengl-template.exe

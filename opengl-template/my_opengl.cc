@@ -9,6 +9,8 @@ GLfloat zRot = 0;
 
 void OpenglInit(int argc, char** argv)
 {
+	//obj1.Init("./dataset/deer.obj");
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA | GLUT_STENCIL);
 	glutInitWindowSize(800, 600);			//set window size
@@ -33,9 +35,7 @@ void DisplayFunc()
 	glDisable(GL_DEPTH_TEST | GL_LIGHTING);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel(GL_SMOOTH);
-
 	glClearColor(0.6f, 0.6f, 0.6f , 0.1);	//can set the background
-
 
 	// ±£´æ¾ØÕó×´Ì¬²¢Ðý×ª
 	glPushMatrix();
@@ -58,7 +58,6 @@ void DisplayFunc()
 		}
 	}
 	glEnd();
-
 
 	glPopMatrix();
 	glutSwapBuffers();	//swap buffer
