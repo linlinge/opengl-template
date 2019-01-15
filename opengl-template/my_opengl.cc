@@ -2,8 +2,9 @@
 #include <math.h>
 #include <GL/glh_glut.h>
 using namespace glh;
-
-
+GLfloat xRot = 0;
+GLfloat yRot = 0;
+GLfloat zRot = 0;
 
 void OpenglInit(int argc, char** argv)
 {
@@ -35,6 +36,13 @@ void DisplayFunc()
 	glClearColor(0.6f, 0.6f, 0.6f , 0.1);	//can set the background
 
 
+	// 保存矩阵状态并旋转
+	glPushMatrix();
+	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
+	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
+	glRotatef(zRot, 0.0f, 0.0f, 1.0f);
+
+	// exmaple: shape1
 	float color = 0.0f;
 	glBegin(GL_POINTS);
 	for (float posY = -1.0f; posY <= 1.0f; posY += 0.001f)
@@ -49,6 +57,9 @@ void DisplayFunc()
 		}
 	}
 	glEnd();
+
+
+	glPopMatrix();
 	glutSwapBuffers();	//swap buffer
 }
 
@@ -106,51 +117,63 @@ void IdleFunc()
 	glutPostRedisplay();//重新绘制（即调用DisplayFunc()函数）
 }
 //数字、字母键按键检测
-void KeyboardFunc(unsigned char Key, int x, int y)
+void KeyboardFunc(unsigned char key, int x, int y)
 {
-	if (Key == 'w' || Key == 'W')
+	if (key == 'w' || key == 'W')
 	{
 		
 			
 	}
 
-	if (Key == 's' || Key == 'S')
+	if (key == 's' || key == 'S')
 	{
 		
 	}
 
-	if (Key == 'a' || Key == 'A')
+	if (key == 'a' || key == 'A')
 	{
 	
 	}
 
-	if (Key == 'd' || Key == 'D')
+	if (key == 'd' || key == 'D')
 	{
 		
 	}
+
 }
 //F1~F12、控制键检测
-void SpecialFunc(int Key, int x, int y)
+void SpecialFunc(int key, int x, int y)
 {
-	if (Key == GLUT_KEY_UP)
+	if (key == GLUT_KEY_UP)
 	{
-		
+		xRot -= 5.0f;
 	}
 
-	if (Key == GLUT_KEY_DOWN)
+	if (key == GLUT_KEY_DOWN)
 	{
-		
+		xRot += 5.0f;
 	}
 
-	if (Key == GLUT_KEY_LEFT)
+	if (key == GLUT_KEY_LEFT)
 	{
-		
+		yRot -= 5.0f;
 	}
 
-	if (Key == GLUT_KEY_RIGHT)
+	if (key == GLUT_KEY_RIGHT)
 	{
-		
+		yRot += 5.0f;
 	}
+	if (key == GLUT_KEY_F1)
+	{
+		zRot += 5.0f;
+	}
+
+	if (key == GLUT_KEY_F2)
+	{
+		zRot -= 5.0f;
+	}
+	// 使用新的坐标重新绘制场景
+	glutPostRedisplay();
 }
 //鼠标检测
 void MouseFunc(int button, int state, int x, int y)
