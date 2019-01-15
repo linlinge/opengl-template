@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "main.hpp"
+#include "main.h"
 using namespace std;
 
 class Patch {
