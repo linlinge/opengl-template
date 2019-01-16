@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <gl/Gl.h>
 #include <gl/glu.h>
-#include <gl/glut.h>
+//#include <gl/glut.h>
 #include <vector>
 #include "main.h"
 using namespace std;
@@ -16,6 +16,7 @@ void MouseFunc(int button, int state, int x, int y);//鼠标检测
 void MotionFunc(int x, int y);//鼠标按着拖动
 void PassiveMotionFunc(int x, int y);//鼠标移动
 void ReshapeFunc(GLsizei width, GLsizei height);
+
 
 
 void AddLight();

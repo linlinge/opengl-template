@@ -16,10 +16,6 @@ double x_trans, y_trans, z_trans = 0;
 double x_old_theta, y_old_theta, z_old_theta = 0;
 float scale=0;
 
-
-
-
-
 void OpenglInit(int argc, char** argv)
 {
 	obj1.Init("./dataset/cat.obj");
@@ -46,6 +42,7 @@ void OpenglInit(int argc, char** argv)
 	glutSpecialFunc(SpecialFunc);//特殊按键检测（F1~F12，控制键）
 	glutMouseFunc(MouseFunc);//鼠标检测
 	glutMotionFunc(MotionFunc);//鼠标按着拖动检测
+	
 	glutPassiveMotionFunc(PassiveMotionFunc);//鼠标移动检测
 
 	// main loop
@@ -176,8 +173,6 @@ void Plot(vector<float>& x, vector<float>& y)
 	}
 }
 
-
-
 void Mesh(vector<vector<Vec3f>>& dat)
 {
 	for (int i = 0; i < dat.size() - 1; i++)
@@ -268,10 +263,15 @@ void SpecialFunc(int key, int x, int y)
 		break;
 	case GLUT_KEY_F2:
 		zRot -= 5.0f;
+		break;
 	case GLUT_KEY_PAGE_DOWN:
-		glScalef(0.8, 0.8, 0.8);
+		glScalef(0.9, 0.9, 0.9);
+		break;
 	case GLUT_KEY_PAGE_UP:
 		glScalef(1.1, 1.1, 1.1);
+		break;
+
+
 	}
 
 	// 使用新的坐标重新绘制场景
@@ -305,6 +305,7 @@ void MouseFunc(int button, int state, int x, int y)
 	}
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
 		scalState = 0;
+
 	glutPostRedisplay();
 }
 
@@ -333,6 +334,8 @@ void MotionFunc(int x, int y)
 	}
 	glutPostRedisplay();
 }
+
+
 
 //鼠标移动
 void PassiveMotionFunc(int x, int y)
