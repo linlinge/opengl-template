@@ -59,25 +59,46 @@ public:
 		return *this;
 	}
 
+	Vec3f  operator -(Vec3f & dat)
+	{
+		Vec3f rst;
+		rst.x = x - dat.x;
+		rst.y = y - dat.y;
+		rst.z = z - dat.z;
+		return rst;
+	}
+
 	float GetArc(Vec3f& dat)
 	{
 		float arc = x * dat.x + y * dat.y + z * dat.z;
 		return arc / sqrt(x*x + y * y + z * z) / sqrt(dat.x*dat.x + dat.y*dat.y + dat.z*dat.z);
 	}
 
-	static Vec3f GetNorm(Vec3f& dat)
-	{
-		Vec3f norm = dat;
-		float a = sqrt(dat.x*dat.x + dat.y * dat.y + dat.z * dat.z);
-		return norm / a;
-	}
-
-	static Vec3f Dot(Vec3f& dat1, Vec3f& dat2)
+	Vec3f Dot( Vec3f& dat)
 	{
 		Vec3f rst;
-		rst.x = dat1.y * dat2.z - dat2.y * dat1.z;
-		rst.y = dat2.x * dat1.z - dat1.x * dat2.z;
-		rst.z = dat1.x * dat2.y - dat2.x * dat1.y;
+		rst.x = y * dat.z - dat.y * z;
+		rst.y = dat.x * z - x * dat.z;
+		rst.z = x * dat.y - dat.x * y;
+		return rst;
 	}
 
+	Vec3f Cross(Vec3f& dat)
+	{
+		Vec3f rst;
+		rst.x = y * dat.z - dat.y*z;
+		rst.y = dat.x*z - x * dat.z;
+		rst.z = x * dat.y - dat.x*y;
+		return rst;
+	}
+
+	Vec3f Normalize()
+	{
+		Vec3f rst;
+		float a = sqrt(x*x + y * y + z * z);
+		rst.y = y / a;
+		rst.z = z / a;
+		rst.x = x / a;
+		return rst;
+	}
 };

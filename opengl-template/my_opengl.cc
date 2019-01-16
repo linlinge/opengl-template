@@ -18,21 +18,16 @@ float scale=0;
 
 void OpenglInit(int argc, char** argv)
 {
-	obj1.Init("./dataset/cat.obj");
+	obj1.Init("./dataset/bunny.obj");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA | GLUT_STENCIL);
-	glutInitWindowSize(600, 600);			//set window size
-	glutInitWindowPosition(100, 150);		//set window position
+	glutInitWindowSize(900, 900);			//set window size
+	glutInitWindowPosition(1000, 200);		//set window position
 	glutCreateWindow("Display");		//window name
 	
 	// scale
 	scale = 0.9f / (2.0f*obj1.radius_);
 	glScalef(scale, scale, scale);
-
-	// text
-	
-	glRasterPos2f(-0.9, 0.7);
-	DrawString("linlinge");
 
 	// message
 	glutDisplayFunc(DisplayFunc);//屏幕显示的回调函数
@@ -77,25 +72,39 @@ void AddLight()
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
 
+	// material
+	GLfloat specular_material[] = { 1.0, 1.0, 1.0, 1.0 };  //镜面反射参数
+	GLfloat shininess_material[] = { 0.5 };               //高光指数
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specular_material);
+	glMaterialfv(GL_FRONT, GL_SHININESS,shininess_material);
+	glEnable(GL_COLOR_MATERIAL);
 
-	GLfloat LightAmb[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat LightDif[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat LightPos[] = { 0.0, 20.0, 80.0, 0.0 };
 
 	//light
-	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmb);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDif);
-	glLightfv(GL_LIGHT1, GL_POSITION, LightPos);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT1);
-	glEnable(GL_COLOR_MATERIAL);
+	GLfloat ambient_light[] = { 0.2, 0.2, 0.2, 1.0 }; 
+	GLfloat difuss_light[] = { 0.1, 0.1, 0.1, 1.0 };
+	GLfloat specular_light[] = { 0.1,0.1,0.1,1.0 };
+	GLfloat LightPos[] = { 50.0, 5.0, 5.0, 1.0 };
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, difuss_light);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPos);	
+	glEnable(GL_LIGHT0);	// enable light0	
+	glEnable(GL_LIGHTING);	// open light
 }
 
 // insert to DisplayFunc
 void AddText()
 {
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_DEPTH_TEST); //打开深度测试
+
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glRasterPos2f(-0.9/scale,0.9/scale);
 	DrawString("[Page	Up] Zoom in");
@@ -106,9 +115,6 @@ void AddText()
 void DisplayFunc()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//clear color buffer
-	glDisable(GL_DEPTH_TEST | GL_LIGHTING);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glShadeModel(GL_SMOOTH);
 	glClearColor(0.8f, 0.8f, 0.8f , 0.1);	//can set the background
 
 
@@ -121,16 +127,22 @@ void DisplayFunc()
 	glRotatef(zRot, 0.0f, 0.0f, 1.0f);
 
 	
-
-	AddLight();
-	glPointSize(2);
-	glBegin(GL_POINTS);
-	glColor3f(1, 0, 0);
-	for (auto& v : obj1.points_)
+	
+	glColor3f(0.5, 0.5, 0.5);
+	for (auto& f : obj1.faces_)
 	{
-		glVertex3f(v.x,v.y,v.z);
+		AddLight();
+		glBegin(GL_POLYGON);
+		glNormal3f(f.normal_.x,f.normal_.y,f.normal_.z);
+
+		for (auto& id : f.vertex_id_)
+		{ 
+			
+			glVertex3f(obj1.points_[id].x, obj1.points_[id].y, obj1.points_[id].z);		
+		}	
+		glEnd();
 	}
-	glEnd();
+	
 
 
 	glPopMatrix();	
@@ -139,14 +151,14 @@ void DisplayFunc()
 
 void ReshapeFunc(GLsizei width, GLsizei height)
 {
-	/*if (height == 0) height = 1;
+	//if (height == 0) height = 1;
 
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();*/
+	//glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+	//glMatrixMode(GL_MODELVIEW);
+	////glLoadIdentity();
 }
 
 void Plot(vector<float>& x, vector<float>& y)

@@ -13,6 +13,7 @@ public:
 	vector<int> vertex_id_;
 	vector<int> texture_id_;
 	vector<int> normal_id_;
+	Vec3f normal_;
 	Vec3f color_;
 };
 

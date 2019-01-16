@@ -168,4 +168,12 @@ void Obj::get_radius()
 		float dist = s0.DistanceXY(p);
 		radius_ = radius_ > dist ? radius_ : dist;
 	}
+
+	for (auto& f:faces_)
+	{
+		Vec3f v1 = points_[f.vertex_id_[0]] - points_[f.vertex_id_[1]];
+		Vec3f v2 = points_[f.vertex_id_[1]] - points_[f.vertex_id_[2]];
+		Vec3f v3 = v1.Cross(v2);
+		f.normal_ = v3.Normalize();
+	}
 }
