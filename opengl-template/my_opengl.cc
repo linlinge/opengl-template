@@ -14,16 +14,11 @@ int oldY = 0;
 float rate = 1;
 double x_trans, y_trans, z_trans = 0;
 double x_old_theta, y_old_theta, z_old_theta = 0;
+float scale=0;
 
 
 
 
-
-void OpenGLInit()
-{
-	float scale=0.9f/(2.0f*obj1.radius_);
-	glScalef(scale,scale,scale);	
-}
 
 void OpenglInit(int argc, char** argv)
 {
@@ -33,8 +28,19 @@ void OpenglInit(int argc, char** argv)
 	glutInitWindowSize(600, 600);			//set window size
 	glutInitWindowPosition(100, 150);		//set window position
 	glutCreateWindow("Display");		//window name
-	OpenGLInit();
+	
+	// scale
+	scale = 0.9f / (2.0f*obj1.radius_);
+	glScalef(scale, scale, scale);
+
+	// text
+	
+	glRasterPos2f(-0.9, 0.7);
+	DrawString("linlinge");
+
+	// message
 	glutDisplayFunc(DisplayFunc);//屏幕显示的回调函数
+	glutReshapeFunc(ReshapeFunc);
 	glutIdleFunc(IdleFunc);//闲置时回调函数（当没有消息时调用）
 	glutKeyboardFunc(KeyboardFunc);//数字、字母键的按键检测的回调函数
 	glutSpecialFunc(SpecialFunc);//特殊按键检测（F1~F12，控制键）
@@ -42,11 +48,11 @@ void OpenglInit(int argc, char** argv)
 	glutMotionFunc(MotionFunc);//鼠标按着拖动检测
 	glutPassiveMotionFunc(PassiveMotionFunc);//鼠标移动检测
 
-
+	// main loop
 	glutMainLoop();
 }
 
-void set_background1()
+void SetBackground1()
 {
 	// exmaple: shape1
 	float color = 0.0f;
@@ -65,12 +71,13 @@ void set_background1()
 	glEnd();
 }
 
-void add_light()
+void AddLight()
 {
 	glShadeModel(GL_SMOOTH);
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -88,6 +95,17 @@ void add_light()
 	glEnable(GL_LIGHT1);
 	glEnable(GL_COLOR_MATERIAL);
 }
+
+// insert to DisplayFunc
+void AddText()
+{
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glRasterPos2f(-0.9/scale,0.9/scale);
+	DrawString("[Page	Up] Zoom in");
+	glRasterPos2f(-0.9 / scale, 0.8 / scale);
+	DrawString("[Page	Down] Zoom out");
+}
+
 void DisplayFunc()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//clear color buffer
@@ -97,6 +115,8 @@ void DisplayFunc()
 	glClearColor(0.8f, 0.8f, 0.8f , 0.1);	//can set the background
 
 
+	AddText();
+
 	// 保存矩阵状态并旋转
 	glPushMatrix();
 	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
@@ -105,7 +125,7 @@ void DisplayFunc()
 
 	
 
-	add_light();
+	AddLight();
 	glPointSize(2);
 	glBegin(GL_POINTS);
 	glColor3f(1, 0, 0);
@@ -120,9 +140,19 @@ void DisplayFunc()
 	glutSwapBuffers();	//swap buffer
 }
 
+void ReshapeFunc(GLsizei width, GLsizei height)
+{
+	/*if (height == 0) height = 1;
 
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();*/
+}
 
-void plot(vector<float>& x, vector<float>& y)
+void Plot(vector<float>& x, vector<float>& y)
 {
 	glColor3f(1, 0, 0);
 	if (x.size() == y.size())
@@ -170,7 +200,7 @@ void Mesh(vector<vector<Vec3f>>& dat)
 	}
 }
 
-void drawString(const char* str) {
+void DrawString(const char* str) {
 	static int isFirstCall = 1;
 	static GLuint lists;
 
@@ -184,44 +214,6 @@ void drawString(const char* str) {
 		glCallList(lists + *str);
 }
 
-void display(void) 
-{
-	//glViewport(0,0,100,1200);
-	glColor3f(0.6f, 0.0f, 0.0f);
-	//glTranslatef(0.f, 0.0f, -3.0f);
-	//glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-	//glRasterPos2f(-0.9, 0.7);
-	drawString("[L] load model(obj)");
-	glRasterPos2f(-0.9, 0.65);
-	drawString("[S] save model(obj)");
-	glRasterPos2f(-0.9, 0.6);
-	drawString("[E] show edge");
-	glRasterPos2f(-0.9, 0.55);
-	drawString("[F] show face");
-	glRasterPos2f(-0.9, 0.50);
-	drawString("[S] show face");
-	glRasterPos2f(-0.9, 0.45);
-	drawString("[Q] exit");
-
-	glRasterPos2f(-0.9, 0);
-	drawString("keys");
-	glRasterPos2f(-0.9, -0.05);
-	drawString("'->' model left shift");
-	glRasterPos2f(-0.9, -0.1);
-	drawString("'<-' model right shift");
-	glRasterPos2f(-0.9, -0.15);
-	drawString("'^' model up shift");
-	glRasterPos2f(-0.9, -0.2);
-	drawString("'v' model down shift");
-	glRasterPos2f(-0.9, -0.3);
-	drawString("mouse");
-	glRasterPos2f(-0.9, -0.35);
-	drawString("[left] control rotate");
-	glRasterPos2f(-0.9, -0.4);
-	drawString("[right] control scale");
-	glRasterPos2f(-0.9, -0.43);
-	drawString("  (upright with right down)");
-}
 
 
 //闲置时调用的函数
